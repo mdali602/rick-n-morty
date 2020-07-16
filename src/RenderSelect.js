@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 const RenderSelect = (props) => {
   const classes = useStyles();
   const {
-    input,
+    name,
     onChange,
     label,
     options,
@@ -33,13 +33,13 @@ const RenderSelect = (props) => {
   return (
     <div>
       <FormControl className={classes.formControl} fullWidth>
-        <InputLabel id="demo-simple-select-label">{label}</InputLabel>
+        <InputLabel id={label}>{label}</InputLabel>
         <Select
           // eslint-disable-next-line react/jsx-props-no-spreading
-          {...input}
+          name={name}
           onChange={onChange}
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
+          labelId={label}
+          id={`${label}-select`}
           // value={age}
           // onChange={() => {})}
         >
@@ -67,7 +67,7 @@ const RenderSelect = (props) => {
 };
 
 RenderSelect.propTypes = {
-  input: PropTypes.shape({}).isRequired,
+  name: PropTypes.shape({}).isRequired,
   label: PropTypes.string.isRequired,
   options: PropTypes.arrayOf().isRequired,
   onChange: PropTypes.func,

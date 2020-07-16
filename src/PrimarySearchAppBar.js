@@ -1,15 +1,14 @@
-import React from 'react';
+import debounce from 'lodash/debounce';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-// import IconButton from '@material-ui/core/IconButton';
-// import Typography from '@material-ui/core/Typography';
-// import MenuIcon from '@material-ui/icons/Menu';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
 import RenderSelect from './RenderSelect';
 import { genders, species } from './constants';
+// import SearchContext from './SearchContext';
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -83,11 +82,38 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function PrimarySearchAppBar({ handleSearch }) {
+function PrimarySearchAppBar({ getCharacters }) {
   const classes = useStyles();
+  // const { getCharacters } = useContext(SearchContext);
+  // eslint-disable-next-line no-unused-vars
+  const [queryParams, setQueryParams] = useState({});
+  const handleSearch = (event) => {
+    setQueryParams((prevParams) => {
+      const nextParams = {
+        ...prevParams,
+        [event.target.name]: event.target.value,
+      };
+      getCharacters(nextParams);
+      return nextParams;
+    });
+  };
 
-  const handleChange = (event) => {
-    console.log('TCL: PrimarySearchAppBar -> event', event);
+  const handleDebounceSearch = (event) => {
+    /* signal to React not to nullify the event object */
+    event.persist();
+    if (!window.debouncedFn) {
+      window.debouncedFn = debounce(() => {
+        setQueryParams((prevParams) => {
+          const nextParams = {
+            ...prevParams,
+            [event.target.name]: event.target.value,
+          };
+          getCharacters(nextParams);
+          return nextParams;
+        });
+      }, 500);
+    }
+    window.debouncedFn();
   };
 
   return (
@@ -104,22 +130,25 @@ function PrimarySearchAppBar({ handleSearch }) {
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
-              onChange={handleSearch}
+              name="name"
+              onChange={handleDebounceSearch}
               inputProps={{ 'aria-label': 'search' }}
             />
           </div>
           <RenderSelect
+            name="gender"
             label="Gender"
             options={genders}
             optionId="id"
             optionLabel="label"
             optionValue="value"
-            onChange={handleChange}
+            onChange={handleSearch}
           />
           <RenderSelect
+            name="species"
             label="Species"
             options={species}
-            onChange={handleChange}
+            onChange={handleSearch}
           />
         </Toolbar>
       </AppBar>
@@ -128,7 +157,7 @@ function PrimarySearchAppBar({ handleSearch }) {
 }
 
 PrimarySearchAppBar.propTypes = {
-  handleSearch: PropTypes.func.isRequired,
+  getCharacters: PropTypes.func.isRequired,
 };
 
 export default PrimarySearchAppBar;

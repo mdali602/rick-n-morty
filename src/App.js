@@ -1,10 +1,11 @@
-import debounce from 'lodash/debounce';
+// import debounce from 'lodash/debounce';
 import React, { useState, useEffect } from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import { endPoint } from './constants';
 import fetch from './fetch';
 import PrimarySearchAppBar from './PrimarySearchAppBar';
+// import SearchContext from './SearchContext';
 
 function App() {
   const [characters, setCharacters] = useState([]);
@@ -13,10 +14,9 @@ function App() {
     try {
       const data = await fetch(endPoint.character, { queryParams });
       const { results = [] } = await data.json();
-      console.log('TCL: getCharacters -> results', results);
       setCharacters(results);
     } catch (err) {
-      console.log('ERROR: getCharacters -> err', err);
+      console.log('getCharacters -> err', err);
     }
   };
 
@@ -24,27 +24,15 @@ function App() {
     getCharacters();
   }, []);
 
-  const handleSearch = (event) => {
-    /* signal to React not to nullify the event object */
-    event.persist();
-
-    if (!window.debouncedFn) {
-      window.debouncedFn = debounce(() => {
-        // let searchString = event.target.value;
-        // fetchSearchData(searchString);
-        console.log('###########', event.target.value);
-        getCharacters({ name: event.target.value });
-      }, 500);
-    }
-    window.debouncedFn();
-  };
   return (
+    // <SearchContext.Provider value={{ getCharacters }}>
     <div className="App">
-      <PrimarySearchAppBar handleSearch={handleSearch} />
+      <PrimarySearchAppBar getCharacters={getCharacters} />
       {characters.map((character) => (
         <p key={character.id}>{character.name}</p>
       ))}
     </div>
+    // </SearchContext.Provider>
   );
 }
 

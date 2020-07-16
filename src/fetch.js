@@ -2,6 +2,7 @@ import { API } from './constants';
 
 function queryParams(params) {
   return Object.keys(params)
+    .filter((key) => params[key])
     .map(
       (k) =>
         `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`,
@@ -12,6 +13,7 @@ function queryParams(params) {
 export default function (endPointURL, options = {}) {
   let url = API + endPointURL;
   if (options.queryParams) {
+    // console.log('TCL: options.queryParams', options.queryParams);
     url +=
       (url.indexOf('?') === -1 ? '?' : '&') +
       queryParams(options.queryParams);
