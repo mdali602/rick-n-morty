@@ -22,8 +22,9 @@ const RenderSelect = (props) => {
   const classes = useStyles();
   const {
     name,
-    onChange,
     label,
+    value,
+    onChange,
     options,
     optionId,
     optionValue,
@@ -32,16 +33,14 @@ const RenderSelect = (props) => {
 
   return (
     <div>
-      <FormControl className={classes.formControl} fullWidth>
+      <FormControl className={classes.formControl}>
         <InputLabel id={label}>{label}</InputLabel>
         <Select
-          // eslint-disable-next-line react/jsx-props-no-spreading
           name={name}
+          value={value}
           onChange={onChange}
           labelId={label}
           id={`${label}-select`}
-          // value={age}
-          // onChange={() => {})}
         >
           {options.map((option) => {
             if (typeof option === 'object') {
@@ -69,6 +68,7 @@ const RenderSelect = (props) => {
 RenderSelect.propTypes = {
   name: PropTypes.shape({}).isRequired,
   label: PropTypes.string.isRequired,
+  value: PropTypes.string,
   options: PropTypes.arrayOf().isRequired,
   onChange: PropTypes.func,
   optionId: PropTypes.string,
@@ -77,6 +77,7 @@ RenderSelect.propTypes = {
 };
 
 RenderSelect.defaultProps = {
+  value: '',
   onChange: () => {},
   optionId: '',
   optionValue: '',
