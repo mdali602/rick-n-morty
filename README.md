@@ -7,3 +7,6 @@ npm start <br />
 
 Runs the app in the development mode.<br>
 
+### hosted at
+
+https://mdali602.github.io/rick-n-morty
