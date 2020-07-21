@@ -48,17 +48,10 @@ const Information = ({ character, property }) => {
     <Grid container xs={12} className={classes.root}>
       <Grid xs={6}>{info(classes.leftAlign, property.label)}</Grid>
       <Grid xs={6}>
-        <Typography
-          variant="body2"
-          color="textSecondary"
-          component="p"
-          className={classes.rightAlign}
-        >
-          {info(
-            classes.rightAlign,
-            deepFind(character, property.access),
-          )}
-        </Typography>
+        {info(
+          classes.rightAlign,
+          deepFind(character, property.access),
+        )}
       </Grid>
     </Grid>
   );

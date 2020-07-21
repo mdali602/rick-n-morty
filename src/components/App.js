@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable react/prop-types */
+import React from 'react';
+// import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core';
+// import { colors } from '../utils/constants';
 import { endPoint, colors } from '../utils/constants';
-import fetch from '../utils/fetch';
+import withFetching from './withFetching';
 import FilterBar from './FilterBar';
-import CardItem from './CardItem';
 import DisplayMessage from './DisplayMessage';
+import CardItem from './CardItem';
+// import CardItem from './CardItem';
 // import {moduleName} from './constants'
 
 const useStyles = makeStyles(() => ({
@@ -18,52 +22,48 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function App() {
+function App({ isLoading, data, fetchData, sortData }) {
   const classes = useStyles();
-  const [characters, setCharacters] = useState([]);
-  const [loading, setLoading] = useState(false);
 
-  const getCharacters = async (queryParams = {}) => {
-    try {
-      setLoading(true);
-      const data = await fetch(endPoint.character, { queryParams });
-      const { results = [] } = await data.json();
-      setCharacters(results);
-      setLoading(false);
-    } catch (err) {
-      console.log('getCharacters -> err', err);
-      setLoading(false);
-    }
+  const getCharacters = (queryParams) => {
+    fetchData(queryParams);
   };
 
-  useEffect(() => {
-    getCharacters();
-  }, []);
-
-  const sortCharacters = (isAsc) =>
-    setCharacters((prevChars) => [
-      ...prevChars.sort((a, b) =>
-        !isAsc ? a.id - b.id : b.id - a.id,
-      ),
-    ]);
+  const sortCharacters = (isAsc) => sortData(isAsc);
 
   return (
     <div className={classes.root}>
+      {/* <p>Success</p> */}
       <FilterBar
         getCharacters={getCharacters}
         sortCharacters={sortCharacters}
       />
-      {loading && <DisplayMessage message="Loading..." />}
-      {!loading && characters.length === 0 && (
-        <DisplayMessage message="No records to display" />
+      {isLoading && <DisplayMessage message="Loading..." />}
+      {!isLoading && data && data.error && (
+        <DisplayMessage
+          message={data.error || 'No records to display'}
+        />
       )}
       <div className={classes.flexContainer}>
-        {characters.map((character) => (
-          <CardItem key={character.id} character={character} />
-        ))}
+        {data &&
+          data.results &&
+          data.results.map((character) => (
+            <CardItem key={character.id} character={character} />
+          ))}
       </div>
     </div>
   );
 }
 
-export default App;
+/* App.propTypes = {
+  isLoading: PropTypes.bool.isRequired,
+  data: PropTypes.arrayOf(),
+  // eslint-disable-next-line react/forbid-prop-types
+  error: PropTypes.any(),
+};
+
+App.defaultProps = {
+  data: [],
+  error: null,
+}; */
+export default withFetching(endPoint.character)(App);

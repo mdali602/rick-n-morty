@@ -19,7 +19,6 @@ import { dropDownFilters } from '../utils/factory';
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: colors.secondary,
-    // height: 100,
     padding: '20px 0',
     justifyContent: 'center',
   },
